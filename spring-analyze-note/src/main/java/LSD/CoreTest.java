@@ -17,6 +17,8 @@ public class CoreTest {
 		SimpleBean simpleBean = xmlApplicationContext.getBean(SimpleBean.class);
 		simpleBean.send();
 		xmlApplicationContext.close();
+
+		System.out.println("饿哦挖掘佛分解挖偶就仸");
 		//test submiting
 
 //		System.setProperty("spring","classpath");
