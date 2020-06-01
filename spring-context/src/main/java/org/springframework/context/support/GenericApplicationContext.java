@@ -107,6 +107,9 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	 * Create a new GenericApplicationContext.
 	 * @see #registerBeanDefinition
 	 * @see #refresh
+	 * 构造函数，为ApplicationContext spring上下文对象初始化beanFactory
+	 * 为什么是DefaultListableBeanFactory？你去查看diagrams时，就能够
+	 * 看到它是BeanFactory的最底层实现。
 	 */
 	public GenericApplicationContext() {
 		this.beanFactory = new DefaultListableBeanFactory();

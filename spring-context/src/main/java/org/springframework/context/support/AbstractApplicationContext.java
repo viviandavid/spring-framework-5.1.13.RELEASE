@@ -514,41 +514,42 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
-			// Prepare this context for refreshing.
+			// Prepare this context for refreshing. 准备上下文刷新环境
 			prepareRefresh();
 
-			// Tell the subclass to refresh the internal bean factory.
+			// Tell the subclass to refresh the internal bean factory. 告诉子类去刷新初始化的Bean工厂
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-			// Prepare the bean factory for use in this context.
+			// Prepare the bean factory for use in this context. 对bean工厂进行填充属性
 			prepareBeanFactory(beanFactory);
 
 			try {
-				// Allows post-processing of the bean factory in context subclasses.
+				// Allows post-processing of the bean factory in context subclasses. 允许在上下文子类中对bean工厂进行后处理
 				postProcessBeanFactory(beanFactory);
 
-				// Invoke factory processors registered as beans in the context.
+				// Invoke factory processors registered as beans in the context. 调用bean工厂的后置处理器
 				invokeBeanFactoryPostProcessors(beanFactory);
 
-				// Register bean processors that intercept bean creation.
+				// Register bean processors that intercept bean creation. 注册拦截bean创建的bean处理器
 				registerBeanPostProcessors(beanFactory);
 
-				// Initialize message source for this context.
+				// Initialize message source for this context. 初始化资源处理器
 				initMessageSource();
 
-				// Initialize event multicaster for this context.
+				// Initialize event multicaster for this context. 为上下文初始化多主机
 				initApplicationEventMulticaster();
 
-				// Initialize other special beans in specific context subclasses.
+				// Initialize other special beans in specific context subclasses. 这个方法也是留给子类去实现，
+				// springboot也是从这个方法启动tomcat的
 				onRefresh();
 
-				// Check for listener beans and register them.
+				// Check for listener beans and register them. 事件监听器注册到多主机上
 				registerListeners();
 
-				// Instantiate all remaining (non-lazy-init) singletons.
+				// Instantiate all remaining (non-lazy-init) singletons. 实例化所有剩余的（非延迟初始化）单例
 				finishBeanFactoryInitialization(beanFactory);
 
-				// Last step: publish corresponding event.
+				// Last step: publish corresponding event. 最后容器刷新 发布刷新事件（spring cloud从这里启动的）
 				finishRefresh();
 			}
 

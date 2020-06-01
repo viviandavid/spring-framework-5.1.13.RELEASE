@@ -136,26 +136,54 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 */
 	public static final String INFER_METHOD = "(inferred)";
 
-
+	/**
+	 * 用于保存bean组件的class对象
+	 */
 	@Nullable
 	private volatile Object beanClass;
 
+	/**
+	 * bean的作用范围
+	 * 默认为singleton prototype
+	 */
 	@Nullable
 	private String scope = SCOPE_DEFAULT;
 
+	/**
+	 * 判断当前bean是否是抽象的
+	 */
 	private boolean abstractFlag = false;
 
+	/**
+	 * 是否为懒加载
+	 */
 	private boolean lazyInit = false;
 
+	/**
+	 * 默认的注入模型是0不支持外部注入
+	 */
 	private int autowireMode = AUTOWIRE_NO;
 
+	/**
+	 * 默认的依赖检查模式
+	 */
 	private int dependencyCheck = DEPENDENCY_CHECK_NONE;
 
+	/**
+	 * 当前的bean 创建要依赖 哪些bean先创建
+	 */
 	@Nullable
 	private String[] dependsOn;
 
+	/**
+	 * 设置为false的时候，容器在自动装配对象的时候，会不考虑当前的bean
+	 * （它不会被看作为其它bean的依赖的bean，但是他依赖其它的bean是能够被自动装配进来的）
+	 */
 	private boolean autowireCandidate = true;
 
+	/**
+	 * 当发生自动装配的时候，假如某个bean会发现多个，那么标注了primary 为true 的首先是被注入进来的
+	 */
 	private boolean primary = false;
 
 	private final Map<String, AutowireCandidateQualifier> qualifiers = new LinkedHashMap<>();
