@@ -513,43 +513,98 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
+		/**
+		 * 上来就是一把锁 不然fresh还没有结束 你又来启动或者销毁 这是不允许的
+		 */
 		synchronized (this.startupShutdownMonitor) {
-			// Prepare this context for refreshing. 准备上下文刷新环境
+			// Prepare this context for refreshing.
+			/**
+			 *准备上下文刷新环境
+			 * 记录容器的启动时间 已激活状态 处理配置文件中的占位符
+			 */
 			prepareRefresh();
 
-			// Tell the subclass to refresh the internal bean factory. 告诉子类去刷新初始化的Bean工厂
+			// Tell the subclass to refresh the internal bean factory.
+			/**
+			 * 告诉子类去刷新初始化的Bean工厂
+			 * 这步比较关键，这步完成后，配置文件就会解析成一个个 Bean 定义，注册到 BeanFactory 中，
+			 * 当然，这里说的 Bean 还没有初始化，只是配置信息都提取出来了，
+			 * 注册也只是将这些信息都保存到了注册中心(说到底核心是一个 beanName-> beanDefinition 的 map)
+			 */
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-			// Prepare the bean factory for use in this context. 对bean工厂进行填充属性
+			// Prepare the bean factory for use in this context.
+			/**
+			 * 对bean工厂进行填充属性
+			 * 设置 BeanFactory 的类加载器，添加几个 BeanPostProcessor，手动注册几个特殊的 bean
+			 */
 			prepareBeanFactory(beanFactory);
 
 			try {
-				// Allows post-processing of the bean factory in context subclasses. 允许在上下文子类中对bean工厂进行后处理
+				// Allows post-processing of the bean factory in context subclasses.
+				/**
+				 * 允许在上下文子类中对bean工厂进行后处理
+				 * 这里需要知道 BeanFactoryPostProcessor 这个知识点，Bean 如果实现了此接口，
+				 * 那么在容器初始化以后，Spring 会负责调用里面的 postProcessBeanFactory 方法。
+				 *
+				 * 这里是提供给子类的扩展点，到这里的时候，所有的 Bean 都加载、注册完成了，但是都还没有初始化
+				 * 具体的子类可以在这步的时候添加一些特殊的 BeanFactoryPostProcessor 的实现类或做点什么事
+				 */
 				postProcessBeanFactory(beanFactory);
 
-				// Invoke factory processors registered as beans in the context. 调用bean工厂的后置处理器
+				// Invoke factory processors registered as beans in the context.
+				/**
+				 * 调用 bean工厂的后置处理器
+				 * 调用 BeanFactoryPostProcessor 各个实现类的 postProcessBeanFactory(factory) 方法
+				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation. 注册拦截bean创建的bean处理器
+				/**
+				 * 注册拦截bean创建的bean处理器
+				 * 注册 BeanPostProcessor 的实现类，注意看和 BeanFactoryPostProcessor 的区别
+				 * 此接口两个方法: postProcessBeforeInitialization 和 postProcessAfterInitialization
+				 * 两个方法分别在 Bean 初始化之前和初始化之后得到执行。注意，到这里 Bean 还没初始化
+				 */
 				registerBeanPostProcessors(beanFactory);
 
-				// Initialize message source for this context. 初始化资源处理器
+				// Initialize message source for this context.
+				/**
+				 * 初始化资源处理器 国际化的东西
+				 */
 				initMessageSource();
 
-				// Initialize event multicaster for this context. 为上下文初始化多主机
+				// Initialize event multicaster for this context.
+				/**
+				 *
+				 * 初始换当前ApplicationContext的事件广播器
+				 */
 				initApplicationEventMulticaster();
 
-				// Initialize other special beans in specific context subclasses. 这个方法也是留给子类去实现，
-				// springboot也是从这个方法启动tomcat的
+				// Initialize other special beans in specific context subclasses.
+				/**
+				 * 典型的模板方法(钩子方法)，
+				 * 具体的子类可以在这里初始化一些特殊的 Bean（在初始化 singleton beans 之前）
+				 * springboot也是从这个方法启动tomcat的
+				 */
 				onRefresh();
 
 				// Check for listener beans and register them. 事件监听器注册到多主机上
+				/**
+				 * 注册事件监听器 监听器需要实现ApplicationListener的接口
+				 */
 				registerListeners();
 
-				// Instantiate all remaining (non-lazy-init) singletons. 实例化所有剩余的（非延迟初始化）单例
+				// Instantiate all remaining (non-lazy-init) singletons.
+				/**
+				 * 实例化所有剩余的（非延迟初始化）单例
+				 */
 				finishBeanFactoryInitialization(beanFactory);
 
-				// Last step: publish corresponding event. 最后容器刷新 发布刷新事件（spring cloud从这里启动的）
+				// Last step: publish corresponding event.
+				/**
+				 * 最后容器刷新 广播事件 发布刷新事件（spring cloud从这里启动的）ApplicationContext 初始化完成
+				 */
 				finishRefresh();
 			}
 
@@ -560,6 +615,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				}
 
 				// Destroy already created singletons to avoid dangling resources.
+				/**
+				 * 销毁 已经创建过的单例beans 防止占用资源
+				 */
 				destroyBeans();
 
 				// Reset 'active' flag.

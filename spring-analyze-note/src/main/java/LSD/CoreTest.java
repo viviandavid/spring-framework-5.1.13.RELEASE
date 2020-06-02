@@ -1,7 +1,9 @@
 package LSD;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
 public class CoreTest {
 
@@ -18,8 +20,6 @@ public class CoreTest {
 		simpleBean.send();
 		xmlApplicationContext.close();
 
-		System.out.println("饿哦挖掘佛分解挖偶就仸");
-		//test submiting
 
 //		System.setProperty("spring","classpath");
 //		ClassPathXmlApplicationContext context =

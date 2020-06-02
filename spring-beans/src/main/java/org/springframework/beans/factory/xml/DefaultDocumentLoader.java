@@ -44,6 +44,7 @@ import org.springframework.util.xml.XmlValidationModeDetector;
  * @author Rob Harrop
  * @author Juergen Hoeller
  * @since 2.0
+ * 定义从资源文件加载到转换为Document的功能
  */
 public class DefaultDocumentLoader implements DocumentLoader {
 

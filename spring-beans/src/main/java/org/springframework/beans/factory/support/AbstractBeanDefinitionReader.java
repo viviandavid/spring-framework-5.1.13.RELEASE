@@ -45,6 +45,9 @@ import org.springframework.util.Assert;
  * @author Chris Beams
  * @since 11.12.2003
  * @see BeanDefinitionReaderUtils
+ * 实现了两个接口 BeanDefinitionReader EnvironmentCapable
+ * BeanDefinitionReader 主要定义资源文件读取并转换为BeanDefinition的各个功能
+ * EnvironmentCapable 定义获取Environment方法
  */
 public abstract class AbstractBeanDefinitionReader implements BeanDefinitionReader, EnvironmentCapable {
 
@@ -53,6 +56,9 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 
 	private final BeanDefinitionRegistry registry;
 
+	/**
+	 * 定义资源加载器，主要应用于根据给定的资源文件地址返回对应的Resource
+	 */
 	@Nullable
 	private ResourceLoader resourceLoader;
 
