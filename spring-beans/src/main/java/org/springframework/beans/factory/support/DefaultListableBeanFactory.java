@@ -891,9 +891,15 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		BeanDefinition existingDefinition = this.beanDefinitionMap.get(beanName);
 		if (existingDefinition != null) {
+			/**
+			 *如果不允许覆盖 则直接抛异常
+			 */
 			if (!isAllowBeanDefinitionOverriding()) {
 				throw new BeanDefinitionOverrideException(beanName, beanDefinition, existingDefinition);
 			}
+			/**
+			 * 用框架的bean去覆盖用户自定义的bean
+			 */
 			else if (existingDefinition.getRole() < beanDefinition.getRole()) {
 				// e.g. was ROLE_APPLICATION, now overriding with ROLE_SUPPORT or ROLE_INFRASTRUCTURE
 				if (logger.isInfoEnabled()) {
@@ -902,6 +908,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							existingDefinition + "] with [" + beanDefinition + "]");
 				}
 			}
+			/**
+			 * 用新的bean去覆盖旧的bean
+			 */
 			else if (!beanDefinition.equals(existingDefinition)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Overriding bean definition for bean '" + beanName +
@@ -910,15 +919,26 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				}
 			}
 			else {
+				/**
+				 * 用同等的bean去覆盖旧的bean
+				 */
 				if (logger.isTraceEnabled()) {
 					logger.trace("Overriding bean definition for bean '" + beanName +
 							"' with an equivalent definition: replacing [" + existingDefinition +
 							"] with [" + beanDefinition + "]");
 				}
 			}
+			/**
+			 * 覆盖
+			 */
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
 		else {
+			/**
+			 * 判断是否已经有其他的 Bean 开始初始化了.
+			 * 注意，"注册Bean" 这个动作结束，Bean 依然还没有初始化.
+			 * 在 Spring 容器启动的最后，会预初始化 所有的 singleton beans
+			 */
 			if (hasBeanCreationStarted()) {
 				// Cannot modify startup-time collection elements anymore (for stable iteration)
 				synchronized (this.beanDefinitionMap) {
@@ -931,9 +951,19 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				}
 			}
 			else {
+				/**
+				 * 最正常的会走到这里
+				 * 将BanDefinition放入到一个map当中，这个map保存了所有的BeanDefinition
+				 */
 				// Still in startup registration phase
 				this.beanDefinitionMap.put(beanName, beanDefinition);
+				/**
+				 * 这个ArrayList会按照配置的顺序保存每一个注册bean的名字
+				 */
 				this.beanDefinitionNames.add(beanName);
+				/**
+				 * 手动注入的bean，就是调用registerSingleton(String beanName, Object singletonObject)方法实现的
+				 */
 				removeManualSingletonName(beanName);
 			}
 			this.frozenBeanDefinitionNames = null;

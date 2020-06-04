@@ -191,6 +191,10 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		Assert.notNull(resources, "Resource array must not be null");
 		int count = 0;
 		for (Resource resource : resources) {
+			/**
+			 * 每一个文件就是一个resource
+			 * XmlBeanDefinitionReader.loadBeanDefinitions()
+			 */
 			count += loadBeanDefinitions(resource);
 		}
 		return count;

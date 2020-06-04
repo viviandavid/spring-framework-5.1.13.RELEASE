@@ -122,6 +122,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
+		/**
+		 *  如果 ApplicationContext 中已经加载过 BeanFactory 了，销毁所有 Bean，关闭 BeanFactory
+		 *  注意，应用中 BeanFactory 本来就是可以多个的，这里可不是说应用全局是否有 BeanFactory，而是当前
+		 *  ApplicationContext 是否有 BeanFactory
+		 */
 		if (hasBeanFactory()) {
 			destroyBeans();
 			closeBeanFactory();
@@ -129,7 +134,14 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 		try {
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
+			/**
+			 * 设置BeanFactory的两个配置属性：是否允许Bean覆盖，是否允许循环已用
+			 */
 			customizeBeanFactory(beanFactory);
+			/**
+			 * 加载Bean到BeanFactory中
+			 * 这个才是重头戏
+			 */
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;
@@ -222,6 +234,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see DefaultListableBeanFactory#setAllowEagerClassLoading
 	 */
 	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+		/**
+		 * 配置文件定义bean的时候，相同id或name，如果在同一个配置文件就会报错，在不同文件就会发生覆盖
+		 */
 		if (this.allowBeanDefinitionOverriding != null) {
 			beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
 		}

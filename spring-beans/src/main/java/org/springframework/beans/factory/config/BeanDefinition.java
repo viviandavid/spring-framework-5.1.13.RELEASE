@@ -40,6 +40,12 @@ import org.springframework.lang.Nullable;
 public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 
 	/**
+	 *    我们可以看到，默认只提供 singleton 和 prototype 两种，
+	 *    很多读者都知道还有 request, session, globalSession, application, websocket 这几种，
+	 *    不过，它们属于基于 web 的扩展。
+	 */
+
+	/**
 	 * Scope identifier for the standard singleton scope: "singleton".
 	 * <p>Note that extended bean factories might support further scopes.
 	 * @see #setScope
@@ -84,11 +90,13 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 
 	/**
 	 * Set the name of the parent definition of this bean definition, if any.
+	 * 设置父Bean Bean的继承，不是java的继承
 	 */
 	void setParentName(@Nullable String parentName);
 
 	/**
 	 * Return the name of the parent definition of this bean definition, if any.
+	 * 得到父 Bean
 	 */
 	@Nullable
 	String getParentName();
@@ -100,6 +108,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * @see #setParentName
 	 * @see #setFactoryBeanName
 	 * @see #setFactoryMethodName
+	 * 设置Bean 的类名
 	 */
 	void setBeanClassName(@Nullable String beanClassName);
 
@@ -114,6 +123,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * @see #getParentName()
 	 * @see #getFactoryBeanName()
 	 * @see #getFactoryMethodName()
+	 * 获取Bean 类名
 	 */
 	@Nullable
 	String getBeanClassName();
@@ -122,6 +132,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * Override the target scope of this bean, specifying a new scope name.
 	 * @see #SCOPE_SINGLETON
 	 * @see #SCOPE_PROTOTYPE
+	 * 设置Bean 的scope
 	 */
 	void setScope(@Nullable String scope);
 
@@ -136,6 +147,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * Set whether this bean should be lazily initialized.
 	 * <p>If {@code false}, the bean will get instantiated on startup by bean
 	 * factories that perform eager initialization of singletons.
+	 * 设置是否懒加载
 	 */
 	void setLazyInit(boolean lazyInit);
 
@@ -163,6 +175,8 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * It does not affect explicit references by name, which will get resolved even
 	 * if the specified bean is not marked as an autowire candidate. As a consequence,
 	 * autowiring by name will nevertheless inject a bean if the name matches.
+	 * 设置该 Bean 是否可以注入到其他 Bean 中，只对根据类型注入有效，
+	 * 如果根据名称注入，即使这边设置了 false，也是可以的
 	 */
 	void setAutowireCandidate(boolean autowireCandidate);
 
@@ -175,6 +189,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * Set whether this bean is a primary autowire candidate.
 	 * <p>If this value is {@code true} for exactly one bean among multiple
 	 * matching candidates, it will serve as a tie-breaker.
+	 * 同一接口的多个实现，如果不指定名字的话，Spring 会优先选择设置 primary 为 true 的 bean
 	 */
 	void setPrimary(boolean primary);
 
@@ -187,6 +202,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * Specify the factory bean to use, if any.
 	 * This the name of the bean to call the specified factory method on.
 	 * @see #setFactoryMethodName
+	 * 如果该 Bean 采用工厂方法生成，指定工厂名称。
 	 */
 	void setFactoryBeanName(@Nullable String factoryBeanName);
 
@@ -203,6 +219,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * or otherwise as a static method on the local bean class.
 	 * @see #setFactoryBeanName
 	 * @see #setBeanClassName
+	 * 工厂方法名称
 	 */
 	void setFactoryMethodName(@Nullable String factoryMethodName);
 
@@ -216,6 +233,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * Return the constructor argument values for this bean.
 	 * <p>The returned instance can be modified during bean factory post-processing.
 	 * @return the ConstructorArgumentValues object (never {@code null})
+	 * 构造器参数
 	 */
 	ConstructorArgumentValues getConstructorArgumentValues();
 
@@ -231,6 +249,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * Return the property values to be applied to a new instance of the bean.
 	 * <p>The returned instance can be modified during bean factory post-processing.
 	 * @return the MutablePropertyValues object (never {@code null})
+	 * Bean中的属性值
 	 */
 	MutablePropertyValues getPropertyValues();
 
@@ -321,6 +340,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 
 	/**
 	 * Return whether this bean is "abstract", that is, not meant to be instantiated.
+	 * 如果Bean为 抽象的，则无法实例化
 	 */
 	boolean isAbstract();
 

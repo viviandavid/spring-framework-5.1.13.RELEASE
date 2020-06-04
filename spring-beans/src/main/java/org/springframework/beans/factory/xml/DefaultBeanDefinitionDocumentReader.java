@@ -93,6 +93,10 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	@Override
 	public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
 		this.readerContext = readerContext;
+		/**
+		 * 拿到了一个漂亮的DOM树，可以开始注册Bean了
+		 * 注意这里只是一个配置文件哦，可以看到之前进来的是一个for循环
+		 */
 		doRegisterBeanDefinitions(doc.getDocumentElement());
 	}
 
@@ -125,10 +129,20 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		// the new (child) delegate with a reference to the parent for fallback purposes,
 		// then ultimately reset this.delegate back to its original (parent) reference.
 		// this behavior emulates a stack of delegates without actually necessitating one.
+		/**
+		 * BeanDefinitionParserDelegate 负责解析 Bean 定义，
+		 * 这里为什么要定义一个 parent? 看到后面就知道了，是递归问题，
+		 *  因为 <beans /> 内部是可以定义 <beans /> 的，所以这个方法的 root 其实不一定就是 xml 的根节点，
+		 *  也可以是嵌套在里面的 <beans /> 节点，从源码分析的角度，我们当做根节点就好了
+		 */
 		BeanDefinitionParserDelegate parent = this.delegate;
 		this.delegate = createDelegate(getReaderContext(), root, parent);
 
 		if (this.delegate.isDefaultNamespace(root)) {
+			/**
+			 * 根节点 <beans ... profile="dev" /> 中的 profile 是否是当前环境需要的，
+			 * 如果当前环境配置的 profile 不包含此 profile，那就直接 return 了，不对此 <beans /> 解析
+			 */
 			String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
 			if (StringUtils.hasText(profileSpec)) {
 				String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
@@ -145,7 +159,14 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			}
 		}
 
+		/**
+		 * 两个钩子，给子类用的。现在没有用到，直接跳过
+		 */
 		preProcessXml(root);
+		/**
+		 * default namespace
+		 * 根级别的element，"import", "alias", "bean", "beans"
+		 */
 		parseBeanDefinitions(root, this.delegate);
 		postProcessXml(root);
 
@@ -173,9 +194,16 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				if (node instanceof Element) {
 					Element ele = (Element) node;
 					if (delegate.isDefaultNamespace(ele)) {
+						/**
+						 * 默认元素的解析 import alias bean beans
+						 */
 						parseDefaultElement(ele, delegate);
 					}
 					else {
+						/**
+						 * 这里就是通用元素解析
+						 * 包括：<mvc />、<task />、<context />、<aop />等
+						 */
 						delegate.parseCustomElement(ele);
 					}
 				}
@@ -194,6 +222,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			processAliasRegistration(ele);
 		}
 		else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
+			/**
+			 * 重点看一下bean标签的解析
+			 */
 			processBeanDefinition(ele, delegate);
 		}
 		else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) {
@@ -303,11 +334,47 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * and registering it with the registry.
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
+		/**
+		 * 将 <bean /> 节点中的信息提取出来，然后封装到一个 BeanDefinitionHolder 中
+		 * Property	 bean中的属性定义
+		 * class	类的全限定名
+		 * name	可指定 id、name(用逗号、分号、空格分隔)
+		 * scope	作用域
+		 * constructor arguments	指定构造参数
+		 * properties	设置属性的值
+		 * autowiring mode	no(默认值)、byName、byType、 constructor
+		 * lazy-initialization mode	是否懒加载(如果被非懒加载的bean依赖了那么其实也就不能懒加载了)
+		 * initialization method	bean 属性设置完成后，会调用这个方法
+		 * destruction method	bean 销毁后的回调方法
+		 *
+		 *下面是一个bean的定义
+		 * <bean id="exampleBean" name="name1, name2, name3" class="com.javadoop.ExampleBean"
+		 *       scope="singleton" lazy-init="true" init-method="init" destroy-method="cleanup">
+		 *
+		 *     <!-- 可以用下面三种形式指定构造参数 -->
+		 *   <constructor-arg type="int" value="7500000"/>
+		 *     <constructor-arg name="years" value="7500000"/>
+		 *     <constructor-arg index="0" value="7500000"/>
+		 *
+		 *     <!-- property 的几种情况 -->
+		 *     <property name="beanOne">
+		 *         <ref bean="anotherExampleBean"/>
+		 *     </property>
+		 *     <property name="beanTwo" ref="yetAnotherBean"/>
+		 *     <property name="integerProperty" value="1"/>
+		 * </bean>
+		 */
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
+			/**
+			 * 如果有自定义属性的话，进行相应的解析
+			 */
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
 			try {
 				// Register the final decorated instance.
+				/**
+				 * 这一步 注册Bean吧
+				 */
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
 			}
 			catch (BeanDefinitionStoreException ex) {
@@ -315,6 +382,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 						bdHolder.getBeanName() + "'", ele, ex);
 			}
 			// Send registration event.
+			/**
+			 * 注册完成以后，发送事件，这里先跳过
+			 */
 			getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));
 		}
 	}

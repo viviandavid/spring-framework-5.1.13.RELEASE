@@ -641,6 +641,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void prepareRefresh() {
 		// Switch to active.
+		/**
+		 *	AtomicBoolean 类型数据
+		 */
 		this.startupDate = System.currentTimeMillis();
 		this.closed.set(false);
 		this.active.set(true);
@@ -659,6 +662,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		/**
+		 * 校验 xml配置文件
+		 */
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...
