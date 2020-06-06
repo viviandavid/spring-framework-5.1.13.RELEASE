@@ -215,18 +215,22 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	}
 
 	private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
+		// import 标签
 		if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) {
 			importBeanDefinitionResource(ele);
 		}
+		// alias 标签
 		else if (delegate.nodeNameEquals(ele, ALIAS_ELEMENT)) {
 			processAliasRegistration(ele);
 		}
+		// bean 标签
 		else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
 			/**
 			 * 重点看一下bean标签的解析
 			 */
 			processBeanDefinition(ele, delegate);
 		}
+		// beans 标签
 		else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) {
 			// recurse
 			doRegisterBeanDefinitions(ele);
@@ -363,6 +367,8 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		 *     <property name="beanTwo" ref="yetAnotherBean"/>
 		 *     <property name="integerProperty" value="1"/>
 		 * </bean>
+		 *
+		 * bdHolder实例 已经包含class name id alias等类的属性了
 		 */
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
@@ -373,7 +379,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			try {
 				// Register the final decorated instance.
 				/**
-				 * 这一步 注册Bean吧
+				 * 这一步 将解析后的bdHolder进行注册
 				 */
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
 			}

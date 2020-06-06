@@ -534,6 +534,7 @@ public class BeanDefinitionParserDelegate {
 		try {
 			/**
 			 * 创建 BeanDefinition，然后设置类信息而已
+			 * 创建的是这个对象GenericBeanDefinition
 			 */
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
 			/**
@@ -603,9 +604,15 @@ public class BeanDefinitionParserDelegate {
 	public AbstractBeanDefinition parseBeanDefinitionAttributes(Element ele, String beanName,
 			@Nullable BeanDefinition containingBean, AbstractBeanDefinition bd) {
 
+		/**
+		 * 解析singleton属性
+		 */
 		if (ele.hasAttribute(SINGLETON_ATTRIBUTE)) {
 			error("Old 1.x 'singleton' attribute in use - upgrade to 'scope' declaration", ele);
 		}
+		/**
+		 * 解析scope属性
+		 */
 		else if (ele.hasAttribute(SCOPE_ATTRIBUTE)) {
 			bd.setScope(ele.getAttribute(SCOPE_ATTRIBUTE));
 		}
@@ -613,20 +620,34 @@ public class BeanDefinitionParserDelegate {
 			// Take default from containing bean in case of an inner bean definition.
 			bd.setScope(containingBean.getScope());
 		}
-
+		/**
+		 * 解析abstract属性
+		 */
 		if (ele.hasAttribute(ABSTRACT_ATTRIBUTE)) {
 			bd.setAbstract(TRUE_VALUE.equals(ele.getAttribute(ABSTRACT_ATTRIBUTE)));
 		}
 
+		/**
+		 * 解析lazy-init属性
+		 */
 		String lazyInit = ele.getAttribute(LAZY_INIT_ATTRIBUTE);
 		if (isDefaultValue(lazyInit)) {
 			lazyInit = this.defaults.getLazyInit();
 		}
+		/**
+		 * 若没有设置或设置成其他字符都会被设置为false
+		 */
 		bd.setLazyInit(TRUE_VALUE.equals(lazyInit));
 
+		/**
+		 * 解析autowired属性
+		 */
 		String autowire = ele.getAttribute(AUTOWIRE_ATTRIBUTE);
 		bd.setAutowireMode(getAutowireMode(autowire));
 
+		/**
+		 * 解析 dependency-check属性
+		 */
 		if (ele.hasAttribute(DEPENDS_ON_ATTRIBUTE)) {
 			String dependsOn = ele.getAttribute(DEPENDS_ON_ATTRIBUTE);
 			bd.setDependsOn(StringUtils.tokenizeToStringArray(dependsOn, MULTI_VALUE_ATTRIBUTE_DELIMITERS));
