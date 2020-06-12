@@ -251,6 +251,14 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// Eagerly check singleton cache for manually registered singletons.
 		/**
 		 * 检查一下 是不是已经创建过了
+		 * 检查缓存中或者：主：例工厂中是否有对应的实例
+		 * 为什么首先会使用这段代码呢
+		 * 在创建单例bean的时候会存在依赖注入的情况，而在创建依赖的时候为了避免循环依赖
+		 * * Spring 创建bean 的原则是不等 bean 创建完成就会将创建 bean 的 ObjectFactory提早曝光
+		 * 也就是将 ObjectFactory 加入到缓存中， 一旦下个 bean 创建时候要依赖上个bean,则直接使用ObjectFactory
+		 * *
+		 *
+		 * 直接尝试从缓存获取或者 singletonFactories 中的 ObjectFactory中获取
 		 */
 		Object sharedInstance = getSingleton(beanName);
 		/**
@@ -318,12 +326,16 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			if (!typeCheckOnly) {
 				markBeanAsCreated(beanName);
 			}
-			/*
+			/**
 			 * 稍稍总结一下：
 			 * 到这里的话，要准备创建 Bean 了，对于 singleton 的 Bean 来说，容器中还没创建过此 Bean；
 			 * 对于 prototype 的 Bean 来说，本来就是要创建一个新的 Bean。
 			 */
 			try {
+				/**
+				 * 将存储xml配置文件的GernericBeanDefinition转换为RootBeanDefinition,如果指定
+				 * BeanName是子Bean的话同时会合并父类的相关属性
+				 */
 				final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 				checkMergedBeanDefinition(mbd, beanName, args);
 
