@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:p="http://www.springframework.org/schema/beans">
+	<!-- 装配自定义的类型转换器 -->
+	<mvc:annotation-driven conversion-service="conversionService"/>
+
+	<bean id="conversionService"
+		  class="org.springframework.context.support.ConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean class="LSD.StringToDateConversion"
+					  p:datePattern="yyyy-MM-dd"></bean>
+			</list>
+		</property>
+	</bean>
+</beans>
