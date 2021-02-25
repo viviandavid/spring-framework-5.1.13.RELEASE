@@ -85,6 +85,17 @@ public class AnnotatedBeanDefinitionReader {
 		Assert.notNull(environment, "Environment must not be null");
 		this.registry = registry;
 		this.conditionEvaluator = new ConditionEvaluator(registry, environment, null);
+		/**
+		 * 注册处理注解的处理器
+		 * 经过一顿操作以后，会在beanFactory(DefaultListableBeanFactory)中的
+		 * beanDefinitionMap集合添加五个内部处理器并将这五个处理器的类名记录在beanDefinitionNames中。
+		 * 具体如下：
+		 * org.springframework.context.annotation.internalConfigurationAnnotationProcessor
+		 * org.springframework.context.annotation.internalAutowiredAnnotationProcessor
+		 * org.springframework.context.annotation.internalCommonAnnotationProcessor
+		 * org.springframework.context.event.internalEventListenerProcessor
+		 * org.springframework.context.event.internalEventListenerFactory
+		 */
 		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
 	}
 
