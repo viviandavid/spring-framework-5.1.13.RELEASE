@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.springframework.context.annotation.ClassPathBeanDefinitionScanner</OriginalElement>
+  <nodes>
+    <node x="1.5" y="216.0">org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider</node>
+    <node x="0.0" y="108.0">org.springframework.core.env.EnvironmentCapable</node>
+    <node x="248.0" y="108.0">org.springframework.context.ResourceLoaderAware</node>
+    <node x="318.0" y="0.0">org.springframework.beans.factory.Aware</node>
+    <node x="66.5" y="324.0">org.springframework.context.annotation.ClassPathBeanDefinitionScanner</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider" target="org.springframework.core.env.EnvironmentCapable">
+      <point x="-119.5" y="-29.0" />
+      <point x="121.0" y="191.0" />
+      <point x="114.0" y="191.0" />
+      <point x="0.0" y="29.0" />
+    </edge>
+    <edge source="org.springframework.context.ResourceLoaderAware" target="org.springframework.beans.factory.Aware">
+      <point x="0.0" y="-29.0" />
+      <point x="0.0" y="29.0" />
+    </edge>
+    <edge source="org.springframework.context.annotation.ClassPathBeanDefinitionScanner" target="org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider">
+      <point x="0.0" y="-29.0" />
+      <point x="0.0" y="29.0" />
+    </edge>
+    <edge source="org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider" target="org.springframework.context.ResourceLoaderAware">
+      <point x="119.5" y="-29.0" />
+      <point x="360.0" y="191.0" />
+      <point x="367.0" y="191.0" />
+      <point x="0.0" y="29.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="243.0" y="191.0" />
+  <SelectedNodes>
+    <node>org.springframework.context.annotation.ClassPathBeanDefinitionScanner</node>
+  </SelectedNodes>
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
