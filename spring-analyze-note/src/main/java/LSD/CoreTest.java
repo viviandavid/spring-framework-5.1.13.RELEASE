@@ -21,6 +21,10 @@ public class CoreTest {
 		SelfService service = (SelfService) applicationContext.getBean("selfService");
 		System.out.println(service.getName());
 
+		/**
+		 * 参考博客地址： https://blog.csdn.net/yu_kang/category_8585439.html
+		 */
+
 //		ClassPathXmlApplicationContext xmlApplicationContext =
 //				new ClassPathXmlApplicationContext("config.xml");
 //		SimpleBean simpleBean = xmlApplicationContext.getBean(SimpleBean.class);

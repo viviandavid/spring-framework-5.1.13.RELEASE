@@ -226,16 +226,32 @@ public class AnnotatedBeanDefinitionReader {
 			@Nullable Class<? extends Annotation>[] qualifiers, BeanDefinitionCustomizer... definitionCustomizers) {
 
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
+		/**
+		 * 是否要跳过解析
+		 */
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
 		}
 
 		abd.setInstanceSupplier(instanceSupplier);
+		/**
+		 * 类的作用域，默认为Singleton
+		 */
 		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
 		abd.setScope(scopeMetadata.getScopeName());
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
 
+		/**
+		 * 处理类当中的通用注解
+		 * 分析源码可以知道他主要处理
+		 * Lazy DependOn Primary Role等注解
+		 * 处理完后 processCommonDefinitionAnnotations 依然是把他添加到数据结构当中去
+		 */
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
+		/**
+		 * 如果向容器注册注解bean定义时，使用了额外的限定符注解
+		 * 依次判断注解当中是否包含了Primary、Lazy、qualifier
+		 */
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
 				if (Primary.class == qualifier) {
@@ -254,6 +270,9 @@ public class AnnotatedBeanDefinitionReader {
 		}
 
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+		/**
+		 * 这个方法 后面再看
+		 */
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
 	}
