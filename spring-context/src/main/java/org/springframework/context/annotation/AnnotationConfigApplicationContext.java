@@ -97,7 +97,11 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 		 * 的构造方法。最重要的是 new DefaultListableBeanFactory()。
 		 */
 		this();
-		//注册配置类
+		/**
+		 * 注册配置类  通过此方法，将配置类的信息加入到beanFactory的beanDefinitionMap中，
+		 * 		将名称加入到beanFactory的beanDefinitionNames中。
+		 * 	此时是 5+x 个
+		 */
 		register(componentClasses);
 		//IOC容器刷新接口AnnotationConfigApplicationContext
 		refresh();

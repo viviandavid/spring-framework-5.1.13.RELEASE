@@ -149,7 +149,7 @@ public abstract class AnnotationConfigUtils {
 			BeanDefinitionRegistry registry, @Nullable Object source) {
 
 		// 这里获取到DefaultListableBeanFactory
-		DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(registry);
+ 		DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(registry);
 		if (beanFactory != null) {
 			if (!(beanFactory.getDependencyComparator() instanceof AnnotationAwareOrderComparator)) {
 				// 解析 {@link Order @Order} and {@link javax.annotation.Priority @Priority}

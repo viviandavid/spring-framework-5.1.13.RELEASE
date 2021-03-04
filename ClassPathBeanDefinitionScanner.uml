@@ -11,24 +11,24 @@
   </nodes>
   <notes />
   <edges>
+    <edge source="org.springframework.context.ResourceLoaderAware" target="org.springframework.beans.factory.Aware">
+      <point x="0.0" y="-29.0" />
+      <point x="0.0" y="29.0" />
+    </edge>
     <edge source="org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider" target="org.springframework.core.env.EnvironmentCapable">
       <point x="-119.5" y="-29.0" />
       <point x="121.0" y="191.0" />
       <point x="114.0" y="191.0" />
       <point x="0.0" y="29.0" />
     </edge>
-    <edge source="org.springframework.context.ResourceLoaderAware" target="org.springframework.beans.factory.Aware">
-      <point x="0.0" y="-29.0" />
-      <point x="0.0" y="29.0" />
-    </edge>
-    <edge source="org.springframework.context.annotation.ClassPathBeanDefinitionScanner" target="org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider">
-      <point x="0.0" y="-29.0" />
-      <point x="0.0" y="29.0" />
-    </edge>
     <edge source="org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider" target="org.springframework.context.ResourceLoaderAware">
       <point x="119.5" y="-29.0" />
       <point x="360.0" y="191.0" />
       <point x="367.0" y="191.0" />
+      <point x="0.0" y="29.0" />
+    </edge>
+    <edge source="org.springframework.context.annotation.ClassPathBeanDefinitionScanner" target="org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider">
+      <point x="0.0" y="-29.0" />
       <point x="0.0" y="29.0" />
     </edge>
   </edges>

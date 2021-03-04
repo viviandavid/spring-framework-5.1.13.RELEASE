@@ -132,7 +132,7 @@ final class PostProcessorRegistrationDelegate {
 		}
 
 		else {
-			// Invoke factory processors registered with the context instance.
+			// Invoke factory processors registered with the context instance. 这里又添加了一个BeanFactoryProcessor
 			invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
 		}
 

@@ -558,6 +558,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				/**
 				 * 调用 bean工厂的后置处理器
 				 * 调用 BeanFactoryPostProcessor 各个实现类的 postProcessBeanFactory(factory) 方法
+				 *
+				 * 其实这里面还添加了一个beanPostProcessor
+				 * ConfigurationClassPostProcessor.
+				 * beanFactory.addBeanPostProcessor(new ImportAwareBeanPostProcessor(beanFactory))
 				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
@@ -579,7 +583,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// Initialize event multicaster for this context.
 				/**
 				 *
-				 * 初始换当前ApplicationContext的事件广播器
+				 * 初始化当前ApplicationContext的事件广播器
 				 */
 				initApplicationEventMulticaster();
 
@@ -660,7 +664,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			}
 		}
 
-		// Initialize any placeholder property sources in the context environment.
+		// Initialize any placeholder property sources in the context environment. 现在是个空实现
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
@@ -724,7 +728,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Configure the bean factory with context callbacks.
 		/**
-		 * 添加BeanPostProcessor
+		 * 添加BeanPostProcessor  后置处理器
 		 * 实现了Aware接口的几个 特殊的beans  在初始化的时候，这个processor负责回调
 		 */
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
@@ -812,6 +816,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Must be called before singleton instantiation.
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		/**
+		 * getBeanFactoryPostProcessors获取自定义的beanFactoryPostProcessor
+		 * 何为自定义？
+		 * 不通过注解形式扫描获取
+		 * 而是通过手动context.addBeanFactoryPostProcessor(beanFactoryPostProcessor)完成自定义
+		 *
+		 * getBeanFactoryPostProcessors默认是个空的List
+		 */
 		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
