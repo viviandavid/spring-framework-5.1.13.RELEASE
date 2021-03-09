@@ -1,5 +1,6 @@
 package LSD;
 
+import LSD.factorybeantest.FactoryBeanService;
 import LSD.udf.SelfService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -20,6 +21,9 @@ public class CoreTest {
 
 		SelfService service = (SelfService) applicationContext.getBean("selfService");
 		System.out.println(service.getName());
+
+		FactoryBeanService beanService = applicationContext.getBean(FactoryBeanService.class);
+		beanService.testFactoryBean();
 
 		/**
 		 * 参考博客地址： https://blog.csdn.net/yu_kang/category_8585439.html
